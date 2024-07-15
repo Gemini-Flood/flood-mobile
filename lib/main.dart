@@ -1,8 +1,12 @@
+import 'package:first_ai/data/datasources/flood/flood_datasource_impl.dart';
 import 'package:first_ai/data/datasources/weather/weather_datasource_impl.dart';
+import 'package:first_ai/data/repositories/floodrepo_impl.dart';
 import 'package:first_ai/data/repositories/weatherrepo_impl.dart';
 import 'package:first_ai/domain/clients/gemini_client.dart';
+import 'package:first_ai/domain/repositories/flood_repository.dart';
 import 'package:first_ai/domain/repositories/weather_repository.dart';
 import 'package:first_ai/presentation/screens/starters/starter.dart';
+import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:first_ai/presentation/viewmodels/google_vm.dart';
 import 'package:first_ai/presentation/viewmodels/weather_vm.dart';
@@ -28,6 +32,10 @@ Future main() async {
         }),
         ChangeNotifierProvider(create: (_) => GeminiViewModel()),
         ChangeNotifierProvider(create: (_) => GoogleViewModel()),
+        ChangeNotifierProvider(create: (_) {
+          FloodRepository floodRepository = FloodRepositoryImpl(floodDataSourceImpl: FloodDataSourceImpl());
+          return FloodViewModel(floodRepository: floodRepository);
+        }),
       ],
       child: const MyApp(),
     )

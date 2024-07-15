@@ -70,7 +70,6 @@ class _LoginScreenState extends State<LoginScreen> {
         "email": emailController.text,
       };
       AuthDataSourceImpl().login(body).then((value) async{
-        print(value["user"]);
         if(value['error'] == true){
           setState((){
             updateBtnState();

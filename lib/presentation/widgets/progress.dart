@@ -5,7 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Progress extends StatefulWidget {
-  const Progress({super.key});
+  final String text;
+  const Progress({super.key, required this.text});
 
   @override
   State<Progress> createState() => _ProgressState();
@@ -34,9 +35,9 @@ class _ProgressState extends State<Progress> {
             ),
           ).animate().fadeIn(),
           const SizedBox(height: 10,),
-          const Text(
-            "Récupération des données",
-            style: TextStyle(
+          Text(
+            widget.text,
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold
             )

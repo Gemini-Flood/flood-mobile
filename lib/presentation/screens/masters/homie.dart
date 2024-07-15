@@ -1,4 +1,5 @@
 import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
+import 'package:first_ai/presentation/viewmodels/google_vm.dart';
 import 'package:first_ai/presentation/viewmodels/weather_vm.dart';
 import 'package:first_ai/presentation/widgets/logo.dart';
 import 'package:first_ai/presentation/widgets/progress.dart';
@@ -10,8 +11,9 @@ import 'package:shimmer/shimmer.dart';
 
 class HomieScreen extends StatefulWidget {
   final userInfos;
+  final String location;
   final Position position;
-  const HomieScreen({super.key, required this.userInfos, required this.position});
+  const HomieScreen({super.key, required this.userInfos, required this.position, required this.location});
 
   @override
   State<HomieScreen> createState() => _HomieScreenState();
@@ -28,9 +30,15 @@ class _HomieScreenState extends State<HomieScreen> {
     promptSent = false;
   }
 
+  getWeatherDatas() async {
+    final weather = Provider.of<WeatherViewModel>(context, listen: false);
+    await weather.retrieveWeatherDatas(update: false, position: widget.position);
+  }
+
   @override
   void initState() {
     super.initState();
+    getWeatherDatas();
   }
 
   @override
@@ -38,8 +46,12 @@ class _HomieScreenState extends State<HomieScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer2<WeatherViewModel, GeminiViewModel>(builder: (context, weather, gemini, child) {
+        if(weather == null){
+          return const Progress(text: "Récupération des données météorologiques",);
+        }
+
         if(weather.loading){
-          return const Progress();
+          return const Progress(text: "Récupération des données météorologiques",);
         }
 
         if(weather.error){
@@ -74,7 +86,7 @@ class _HomieScreenState extends State<HomieScreen> {
 
         if(weather.loading == false && !promptSent){
           promptSent = true;
-          Future.delayed(const Duration(seconds: 5), () => gemini.retrievePrediction(context));
+          Future.delayed(const Duration(seconds: 5), () => gemini.retrievePrediction(context: context, position: widget.position, location: widget.location));
         }
 
         return SafeArea(
@@ -98,20 +110,32 @@ class _HomieScreenState extends State<HomieScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      weather.getWeatherData.name,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(Colors.white),
+                        fixedSize: WidgetStatePropertyAll(Size.fromHeight(35)),
+                        shape: WidgetStatePropertyAll(CircleBorder())
                       ),
-                    ).animate().fadeIn(),
-                    const SizedBox(height: 10,),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.black,
+                        size: 14,
+                      ),
+                    ),
                     Text(
                       "${weather.getWeatherData.main.temp.toInt()}°",
                       style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 175,
+                          fontSize: 150,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ).animate().fadeIn(),
+                    Text(
+                      weather.getWeatherData.name,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold
                       ),
                     ).animate().fadeIn(),
@@ -153,6 +177,64 @@ class _HomieScreenState extends State<HomieScreen> {
                               fontSize: 12,
                             )
                         ).animate().fadeIn(),
+                      ],
+                    ),
+                  ).animate().fadeIn(),
+                if(gemini.error == true)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Theme.of(context).primaryColorLight, width: 2)
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            aiLogo(size: 50),
+                            const SizedBox(width: 5,),
+                            SizedBox(
+                              width: size.width * 0.7,
+                              child: const Text(
+                                "Une erreur est survenue lors de l'analyse",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold
+                                )
+                              ),
+                            )
+                          ],
+                        ).animate().fadeIn(),
+                        const SizedBox(height: 10,),
+                        GestureDetector(
+                          onTap: () {
+                            promptSent = true;
+                            gemini.retrievePrediction(context: context, position: widget.position, location: widget.location);
+                          },
+                          child: Container(
+                            height: 40,
+                            width: size.width,
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColorLight,
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Relancer",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ).animate().fadeIn(),
@@ -243,7 +325,7 @@ class _HomieScreenState extends State<HomieScreen> {
                         ),
                       ),
                     ).animate().fadeIn(),
-                    if(gemini.loading == false)
+                    /*if(gemini.loading == false)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -267,7 +349,7 @@ class _HomieScreenState extends State<HomieScreen> {
                             child: aiLogo(size: 75).animate().fadeIn(),
                           ),
                         ],
-                      )
+                      )*/
                   ],
                 ),
               ],
@@ -275,28 +357,6 @@ class _HomieScreenState extends State<HomieScreen> {
           ).animate().fadeIn(),
         );
       })
-      /*FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-
-
-          if(snapshot.connectionState == ConnectionState.done){
-
-            if(!snapshot.hasData){
-              return const Progress();
-            }
-          }
-
-          if(snapshot.hasData){
-            if (cachedWeatherData != null && !promptSent) {
-              promptSent = true;
-              Future.delayed(const Duration(seconds: 5), () => sendPrompt());
-            }
-          }
-
-
-        },
-      ),*/
     );
   }
 }

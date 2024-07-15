@@ -12,6 +12,7 @@ class GoogleViewModel extends ChangeNotifier {
 
   bool _isLoading = false;
   bool _update = false;
+  bool _current = false;
   Position? _position;
   List<Placemark> _placemarks = [];
   LatLng? _center;
@@ -19,6 +20,7 @@ class GoogleViewModel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   bool get update => _update;
+  bool get current => _current;
   Position? get position => _position;
   List<Placemark> get getPlacemarks => _placemarks;
   LatLng? get center => _center;
@@ -26,6 +28,11 @@ class GoogleViewModel extends ChangeNotifier {
 
   setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  setCurrent(bool value) {
+    _current = value;
     notifyListeners();
   }
 
@@ -79,6 +86,7 @@ class GoogleViewModel extends ChangeNotifier {
         position.latitude,
         position.longitude
     );
+    setCurrent(true);
     setPosition(position);
     setCenter(center);
     setCustomIcons();

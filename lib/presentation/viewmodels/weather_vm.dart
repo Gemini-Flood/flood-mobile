@@ -16,11 +16,13 @@ import 'package:provider/provider.dart';
 class WeatherViewModel extends ChangeNotifier {
 
   WeatherRepository weatherRepository;
+  GoogleViewModel? googleViewModel;
 
-  WeatherViewModel({required this.weatherRepository}) {
-    
+  /*WeatherViewModel({required this.weatherRepository}) {
     retrieveWeatherDatas(update: false, position: null);
-  }
+  }*/
+
+  WeatherViewModel({required this.weatherRepository});
 
   bool _error = false;
   bool _loading = false;
@@ -38,6 +40,12 @@ class WeatherViewModel extends ChangeNotifier {
   bool get update => _update;
   String get errorMessage => _errorMessage;
   String get getBackground => _background;
+  GoogleViewModel get getGoogleViewModel => googleViewModel!;
+
+  setGoogleViewModel(GoogleViewModel value) {
+    googleViewModel = value;
+    notifyListeners();
+  }
 
   WeatherDataModel get getWeatherData => _weatherData!;
   ForecastModel get getForecast => _forecast!;
