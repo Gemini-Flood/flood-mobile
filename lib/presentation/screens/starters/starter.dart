@@ -1,5 +1,6 @@
 import 'package:first_ai/data/helpers/preferences.dart';
 import 'package:first_ai/presentation/screens/auth/login.dart';
+import 'package:first_ai/presentation/screens/home.dart';
 import 'package:first_ai/presentation/screens/masters/homie.dart';
 import 'package:first_ai/presentation/screens/masters/maps.dart';
 import 'package:first_ai/presentation/widgets/logo.dart';
@@ -20,7 +21,7 @@ class _StarterScreenState extends State<StarterScreen> {
     await Permission.location.request();
     await Future.delayed(const Duration(seconds: 3), () => Preferences().getUserInfos()).then((value) {
       if(value['id'] != null){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MapScreen(userInfos: value)), (route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(userInfos: value)), (route) => false);
       }else{
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
       }

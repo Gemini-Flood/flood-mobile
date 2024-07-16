@@ -12,6 +12,7 @@ import 'package:first_ai/presentation/viewmodels/google_vm.dart';
 import 'package:first_ai/presentation/viewmodels/weather_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,16 @@ Future main() async {
 
   await dotenv.load(fileName: '.env');
   String iaKey = dotenv.env['IA_KEY']!;
-  final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: iaKey);
+  final model = GenerativeModel(
+    model: 'gemini-1.5-flash',
+    apiKey: iaKey,
+    safetySettings: [
+      SafetySetting(HarmCategory.dangerousContent, HarmBlockThreshold.high),
+      SafetySetting(HarmCategory.harassment, HarmBlockThreshold.high),
+      SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.high),
+      SafetySetting(HarmCategory.sexuallyExplicit, HarmBlockThreshold.high),
+    ],
+  );
   final gemini = GeminiClient(model: model);
 
   runApp(
@@ -40,15 +50,6 @@ Future main() async {
       child: const MyApp(),
     )
   );
-}
-
-class Home extends StatelessWidget {
-  const Home({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
 }
 
 
@@ -81,6 +82,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('fr'), // French
+      ],
       debugShowCheckedModeBanner: false,
       title: 'First AI',
       theme: ThemeData(

@@ -22,7 +22,7 @@ class ReportModel extends Report {
       latitude: json['latitude'],
       longitude: json['longitude'],
       image: json['image'],
-      createdAt: json['created_at']
+      createdAt: DateTime.parse(json['created_at'])
     );
   }
 }

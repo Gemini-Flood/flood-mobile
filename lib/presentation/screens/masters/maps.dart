@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   final userInfos;
-  const MapScreen({super.key, this.userInfos});
+  final int type; // 0 = report, 1 = analyze
+  const MapScreen({super.key, this.userInfos, required this.type});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -64,12 +65,15 @@ class _MapScreenState extends State<MapScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColorLight,
+        /*backgroundColor: Theme.of(context).primaryColorLight,
+        iconTheme: const IconThemeData(
+          color: Colors.white
+        ),*/
         title: const Text(
           "Sélectionner un lieu",
           style: TextStyle(
             fontSize: 13,
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold
           ),
         ),
@@ -111,7 +115,7 @@ class _MapScreenState extends State<MapScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white54,
                         borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Theme.of(context).primaryColorLight, width: 2),
+                        border: Border.all(color: Theme.of(context).primaryColorLight),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -148,36 +152,61 @@ class _MapScreenState extends State<MapScreen> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Theme.of(context).primaryColorLight)
-                                ),
-                                child: IconButton(
-                                  onPressed: () => retrieveUserPosition(),
-                                  style: ButtonStyle(
-                                    fixedSize: WidgetStateProperty.all(const Size(40, 40)),
-                                    elevation: WidgetStateProperty.all(5),
-                                    shape: WidgetStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)
-                                      )
-                                    ),
-                                    backgroundColor: WidgetStateProperty.all(Colors.white)
+                              IconButton(
+                                onPressed: () => retrieveUserPosition(),
+                                style: ButtonStyle(
+                                  fixedSize: WidgetStateProperty.all(const Size(45, 45)),
+                                  elevation: WidgetStateProperty.all(5),
+                                  shape: WidgetStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)
+                                    )
                                   ),
-                                  icon: Icon(
-                                    Icons.my_location,
-                                    color: Theme.of(context).primaryColorLight,
-                                    size: 17,
-                                  )
+                                  backgroundColor: WidgetStateProperty.all(Theme.of(context).primaryColorLight.withOpacity(0.8))
                                 ),
+                                icon: const Icon(
+                                  Icons.my_location,
+                                  color: Colors.white,
+                                  size: 20,
+                                )
                               )
                             ],
                           ).animate().fadeIn(),
                           Divider(color: Theme.of(context).primaryColorLight.withOpacity(0.2)),
-                          Row(
+                          GestureDetector(
+                            onTap: () async {
+                              if(widget.type == 0){
+                                String location = "${google.getPlacemarks.reversed.last.locality}, ${google.getPlacemarks.reversed.last.subLocality!.isNotEmpty ? google.getPlacemarks.reversed.last.subLocality : google.getPlacemarks.reversed.last.administrativeArea}";
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ReportScreen(userInfos: widget.userInfos, position: google.position!, location: location, )));
+                              }else if(widget.type == 1){
+                                String location = "${google.getPlacemarks.reversed.last.locality}, ${google.getPlacemarks.reversed.last.subLocality!.isNotEmpty ? google.getPlacemarks.reversed.last.subLocality : google.getPlacemarks.reversed.last.administrativeArea}";
+                                await Provider.of<WeatherViewModel>(context, listen: false).setGoogleViewModel(google);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => HomieScreen(userInfos: widget.userInfos, position: google.position!, location: location, )));
+                              }
+                            },
+                            child: Container(
+                              height: 45,
+                              width: size.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Theme.of(context).primaryColorLight.withOpacity(0.4))
+                              ),
+                              child: Center(
+                                child: Text(
+                                  widget.type == 0 ? "Reporter une inondation" : "Démarrer une analyse",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColorLight,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                          /*Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               GestureDetector(
@@ -189,8 +218,8 @@ class _MapScreenState extends State<MapScreen> {
                                   height: 40,
                                   width: size.width * 0.425,
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColorLight,
-                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10))
+                                      color: Theme.of(context).primaryColorLight,
+                                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10))
                                   ),
                                   child: const Center(
                                     child: Text(
@@ -198,9 +227,9 @@ class _MapScreenState extends State<MapScreen> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ),
@@ -216,8 +245,8 @@ class _MapScreenState extends State<MapScreen> {
                                   height: 40,
                                   width: size.width * 0.425,
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColorLight,
-                                    borderRadius: const BorderRadius.only(bottomRight: Radius.circular(10))
+                                      color: Theme.of(context).primaryColorLight,
+                                      borderRadius: const BorderRadius.only(bottomRight: Radius.circular(10))
                                   ),
                                   child: const Center(
                                     child: Text(
@@ -232,12 +261,12 @@ class _MapScreenState extends State<MapScreen> {
                                 ),
                               )
                             ],
-                          ).animate().fadeIn()
+                          ).animate().fadeIn()*/
                         ],
                       ),
                     ).animate().fadeIn(),
                   ],
-                ),
+                ).animate().fadeIn(),
               )
             ],
           );

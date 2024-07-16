@@ -1,3 +1,4 @@
+import 'package:first_ai/data/helpers/preferences.dart';
 import 'package:first_ai/data/helpers/utils.dart';
 import 'package:first_ai/data/models/floods/report.dart';
 import 'package:first_ai/data/models/floods/zone.dart';
@@ -11,19 +12,30 @@ class FloodViewModel extends ChangeNotifier {
 
   FloodViewModel({required this.floodRepository}) {
     setUpdate(false);
+    retrieveReport();
   }
 
+  bool _retrieving = false;
   bool _error = false;
   bool _loading = false;
   bool _update = false;
   ReportModel? _report;
+  List<ReportModel> _reports = [];
   ZoneModel? _zone;
 
+  bool get retrieving => _retrieving;
   bool get error => _error;
   bool get loading => _loading;
   bool get update => _update;
   ReportModel get getReport => _report!;
+  List<ReportModel> get getReports => _reports;
   ZoneModel get getForecast => _zone!;
+
+
+  setRetrieving(bool value) {
+    _retrieving = value;
+    notifyListeners();
+  }
 
   setError(bool value) {
     _error = value;
@@ -42,6 +54,11 @@ class FloodViewModel extends ChangeNotifier {
 
   setReport(ReportModel value) {
     _report = value;
+    notifyListeners();
+  }
+
+  setReports(List value) {
+    _reports = (value).map((i) => ReportModel.fromJson(i)).toList();
     notifyListeners();
   }
 
@@ -78,6 +95,24 @@ class FloodViewModel extends ChangeNotifier {
         setError(true);
         setLoading(false);
         Utils().showMsgBox(value['message'], true, context);
+      }
+    });
+  }
+
+  retrieveReport() async {
+    setRetrieving(true);
+    await Preferences().getUserInfos().then((value) async {
+      if(value['id'] != null) {
+        await FloodUseCase(floodRepository).getUserReports(value['id']).then((value) async {
+          if(value['code'] == 200) {
+            setError(false);
+            setRetrieving(false);
+            setReports(value['data']);
+          } else if(value['error'] == true) {
+            setError(true);
+            setRetrieving(false);
+          }
+        });
       }
     });
   }

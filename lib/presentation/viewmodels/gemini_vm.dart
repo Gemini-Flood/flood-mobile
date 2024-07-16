@@ -99,7 +99,7 @@ class GeminiViewModel extends ChangeNotifier {
 
     setLoading(true);
 
-    String message = "Donnes moi une analyse brève et informative de cette photo à mettre en description d'un formulaire à soumettre. Mettre la réponse en français";
+    String message = "Donnes moi une analyse décrivant le problème de façon informative sur cette photo à mettre en description d'un formulaire à soumettre. Mettre la réponse en français";
     var gemini = Provider.of<GeminiClient>(context, listen: false);
     await gemini.generateContentFromImage(image: image, message: message).then((value) {
       setMessage(value);

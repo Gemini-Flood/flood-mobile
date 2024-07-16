@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:first_ai/presentation/screens/home.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:first_ai/presentation/widgets/logo.dart';
@@ -45,7 +46,22 @@ class _ReportScreenState extends State<ReportScreen> {
       'longitude': widget.position.longitude.toString(),
     };
     final flood = Provider.of<FloodViewModel>(context, listen: false);
+    final gemini = Provider.of<GeminiViewModel>(context, listen: false);
     await flood.saveReport(body, media!.path, context);
+    if(flood.loading == false && flood.error == false){
+      gemini.setMessage("");
+      clearfield();
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(userInfos: widget.userInfos)), (route) => false);
+    }
+  }
+
+  clearfield() {
+    setState(() {
+      promptSent = false;
+      media = null;
+      _image = null;
+      descriptionController.clear();
+    });
   }
 
   @override
@@ -74,6 +90,10 @@ class _ReportScreenState extends State<ReportScreen> {
 
           if(gemini.message != null){
             descriptionController.text = gemini.message!;
+          }
+
+          if(gemini.message != null && media == null){
+            descriptionController.clear();
           }
 
           return ListView(

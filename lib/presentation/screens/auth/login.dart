@@ -3,6 +3,7 @@ import 'package:first_ai/data/datasources/authentication/auth_datasource_impl.da
 import 'package:first_ai/data/helpers/preferences.dart';
 import 'package:first_ai/data/helpers/utils.dart';
 import 'package:first_ai/presentation/screens/auth/signup.dart';
+import 'package:first_ai/presentation/screens/home.dart';
 import 'package:first_ai/presentation/screens/masters/homie.dart';
 import 'package:first_ai/presentation/screens/masters/maps.dart';
 import 'package:flutter/material.dart';
@@ -49,11 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if(isAuthenticated){
         datas = await Preferences().getUserInfos();
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => MapScreen(userInfos: datas)), (route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen(userInfos: datas)), (route) => false);
       }
     } catch (e) {
       datas = await Preferences().getUserInfos();
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => MapScreen(userInfos: datas)), (route) => false);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen(userInfos: datas)), (route) => false);
     }
 
   }
