@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class GoogleViewModel extends ChangeNotifier {
 
   GoogleViewModel() {
-    getInitialPosition(false);
+    getInitialPosition(false, true);
   }
 
   bool _isLoading = false;
@@ -74,14 +74,16 @@ class GoogleViewModel extends ChangeNotifier {
     return center;
   }
 
-  getInitialPosition(bool update) async {
+  getInitialPosition(bool update, bool place) async {
     update ? setUpdate(true) : setLoading(true);
     Position position = await Permissions().getPosition();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude
-    );
-    setPlacemarks(placemarks.reversed.last);
+    if(place){
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude
+      );
+      setPlacemarks(placemarks.reversed.last);
+    }
     final LatLng center = LatLng(
         position.latitude,
         position.longitude

@@ -42,11 +42,13 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   actualize(BuildContext context) async {
+    var risque = widget.result.risque['message'].toString();
+    String level = risque.replaceAll(RegExp(r'\*'), '');
     Map<String, dynamic> body = {
       'location': widget.location,
       'latitude': widget.position.latitude.toString(),
       'longitude': widget.position.longitude.toString(),
-      'risk_level': widget.result.risque['message'],
+      'risk_level': level.toLowerCase(),
       'historical_data': widget.result.detail['message'],
     };
     final flood = Provider.of<FloodViewModel>(context, listen: false);

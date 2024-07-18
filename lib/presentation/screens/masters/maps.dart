@@ -30,7 +30,7 @@ class _MapScreenState extends State<MapScreen> {
 
   retrieveUserPosition() async {
     var googlevm = await Provider.of<GoogleViewModel>(context, listen: false);
-    await googlevm.getInitialPosition(true);
+    await googlevm.getInitialPosition(true, true);
     mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(

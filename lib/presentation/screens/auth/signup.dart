@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   retrieveUserPosition() async {
     var googlevm = await Provider.of<GoogleViewModel>(context, listen: false);
-    await googlevm.getInitialPosition(true);
+    await googlevm.getInitialPosition(true, false);
     mapController.animateCamera(
         CameraUpdate.newCameraPosition(
             CameraPosition(

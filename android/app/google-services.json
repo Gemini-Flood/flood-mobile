@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "460628855416",
+    "project_id": "floodai-1f951",
+    "storage_bucket": "floodai-1f951.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460628855416:android:82b3c1f6e5de0c10503b8d",
+        "android_client_info": {
+          "package_name": "com.gine.first_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9TS4MZTNRNzNGK0F5ACwFi75lGe-OgZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

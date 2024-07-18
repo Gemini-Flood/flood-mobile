@@ -1,4 +1,5 @@
 import 'package:first_ai/presentation/screens/masters/maps.dart';
+import 'package:first_ai/presentation/viewmodels/auth_vm.dart';
 import 'package:intl/intl.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/widgets/loader.dart';
@@ -29,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Consumer<FloodViewModel>(
-        builder: (context, flood, child) {
+      body: Consumer2<FloodViewModel, AuthViewModel>(
+        builder: (context, flood, auth, child) {
           return SafeArea(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -190,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: size.height * 0.25,
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade100,
-                                border: Border.all(color: Theme.of(context).primaryColorLight),
+                                border: Border.all(color: Colors.redAccent),
                                 borderRadius: const BorderRadius.only(
                                   bottomRight: Radius.circular(10),
                                 )
@@ -208,9 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     width: size.width * 0.3,
                                     height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColorLight,
-                                      borderRadius: const BorderRadius.only(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.redAccent,
+                                      borderRadius: BorderRadius.only(
                                         bottomRight: Radius.circular(7),
                                       )
                                     ),

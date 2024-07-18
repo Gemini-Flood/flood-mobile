@@ -41,7 +41,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   @override
   Future updateFCMToken(Map<String, String> body) async {
     try {
-      String url = "${Constants.baseUrl}auth/update-token";
+      String url = "${Constants.baseUrl}auth/updateToken";
       Map<String, String> headers = {
         "Accept": "application/json",
       };

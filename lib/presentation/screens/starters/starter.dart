@@ -45,7 +45,13 @@ class _StarterScreenState extends State<StarterScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              aiLogo(size: 75).animate().fadeIn(),
+              // aiLogo(size: 75).animate().fadeIn(),
+              Image.asset(
+                "assets/vectors/icone.png",
+                width: 75,
+                height: 75,
+                fit: BoxFit.fill,
+              ).animate().fadeIn(),
               const SizedBox(height: 5,),
               const Text(
                 "FloodAI by Gemini",

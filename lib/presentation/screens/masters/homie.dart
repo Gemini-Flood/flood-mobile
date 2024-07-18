@@ -212,7 +212,8 @@ class _HomieScreenState extends State<HomieScreen> {
                         ).animate().fadeIn(),
                         const SizedBox(height: 10,),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await gemini.setError(false);
                             promptSent = true;
                             gemini.retrievePrediction(context: context, position: widget.position, location: widget.location);
                           },

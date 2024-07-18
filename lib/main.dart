@@ -1,11 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:first_ai/data/datasources/alert/alert_datasource_impl.dart';
+import 'package:first_ai/data/datasources/authentication/auth_datasource_impl.dart';
 import 'package:first_ai/data/datasources/flood/flood_datasource_impl.dart';
 import 'package:first_ai/data/datasources/weather/weather_datasource_impl.dart';
+import 'package:first_ai/data/helpers/notifications.dart';
+import 'package:first_ai/data/repositories/alertrepo_impl.dart';
+import 'package:first_ai/data/repositories/authrepo_impl.dart';
 import 'package:first_ai/data/repositories/floodrepo_impl.dart';
 import 'package:first_ai/data/repositories/weatherrepo_impl.dart';
 import 'package:first_ai/domain/clients/gemini_client.dart';
+import 'package:first_ai/domain/repositories/alert_repository.dart';
+import 'package:first_ai/domain/repositories/auth_repository.dart';
 import 'package:first_ai/domain/repositories/flood_repository.dart';
 import 'package:first_ai/domain/repositories/weather_repository.dart';
 import 'package:first_ai/presentation/screens/starters/starter.dart';
+import 'package:first_ai/presentation/viewmodels/alert_vm.dart';
+import 'package:first_ai/presentation/viewmodels/auth_vm.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:first_ai/presentation/viewmodels/google_vm.dart';
@@ -17,6 +27,16 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:provider/provider.dart';
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyC9TS4MZTNRNzNGK0F5ACwFi75lGe-OgZY",
+      appId: "1:460628855416:android:82b3c1f6e5de0c10503b8d",
+      messagingSenderId: "460628855416",
+      projectId: "floodai-1f951"
+    ),
+  );
+  await Notifications().initNotifications();
 
   await dotenv.load(fileName: '.env');
   String iaKey = dotenv.env['IA_KEY']!;
@@ -37,6 +57,10 @@ Future main() async {
       providers: [
         Provider(create: (_) => gemini),
         ChangeNotifierProvider(create: (_) {
+          AuthRepository authRepository = AuthRepositoryImpl(authDataSourceImpl: AuthDataSourceImpl());
+          return AuthViewModel(authRepository: authRepository);
+        }),
+        ChangeNotifierProvider(create: (_) {
           WeatherRepository weatherRepository = WeatherRepositoryImpl(weatherDataSourceImpl: WeatherDataSourceImpl());
           return WeatherViewModel(weatherRepository: weatherRepository);
         }),
@@ -45,6 +69,10 @@ Future main() async {
         ChangeNotifierProvider(create: (_) {
           FloodRepository floodRepository = FloodRepositoryImpl(floodDataSourceImpl: FloodDataSourceImpl());
           return FloodViewModel(floodRepository: floodRepository);
+        }),
+        ChangeNotifierProvider(create: (_) {
+          AlertRepository alertRepository = AlertRepositoryImpl(alertDataSourceImpl: AlertDataSourceImpl());
+          return AlertViewModel(alertRepository: alertRepository);
         }),
       ],
       child: const MyApp(),
