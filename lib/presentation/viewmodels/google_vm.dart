@@ -17,6 +17,8 @@ class GoogleViewModel extends ChangeNotifier {
   List<Placemark> _placemarks = [];
   LatLng? _center;
   BitmapDescriptor? customIcon;
+  BitmapDescriptor? customZoneIcon;
+  BitmapDescriptor? customReportIcon;
 
   bool get isLoading => _isLoading;
   bool get update => _update;
@@ -25,6 +27,8 @@ class GoogleViewModel extends ChangeNotifier {
   List<Placemark> get getPlacemarks => _placemarks;
   LatLng? get center => _center;
   BitmapDescriptor? get getCustomIcon => customIcon;
+  BitmapDescriptor? get getCustomZoneIcon => customZoneIcon;
+  BitmapDescriptor? get getCustomReportIcon => customReportIcon;
 
   setLoading(bool value) {
     _isLoading = value;
@@ -66,6 +70,26 @@ class GoogleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCustomZoneIcons() async {
+    customZoneIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(devicePixelRatio: 2.0),
+      'assets/markers/zone.png',
+      width: 30,
+      height: 30
+    );
+    notifyListeners();
+  }
+
+  void setCustomReportIcons() async {
+    customReportIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(devicePixelRatio: 2.0),
+      'assets/markers/report.png',
+      width: 30,
+      height: 30
+    );
+    notifyListeners();
+  }
+
   getLocation() {
     final LatLng center = LatLng(
         position!.latitude,
@@ -92,6 +116,8 @@ class GoogleViewModel extends ChangeNotifier {
     setPosition(position);
     setCenter(center);
     setCustomIcons();
+    setCustomReportIcons();
+    setCustomZoneIcons();
     update ? setUpdate(false) : setLoading(false);
   }
 

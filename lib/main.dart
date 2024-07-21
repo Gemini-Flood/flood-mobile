@@ -21,6 +21,7 @@ import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:first_ai/presentation/viewmodels/google_vm.dart';
 import 'package:first_ai/presentation/viewmodels/weather_vm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -73,7 +74,7 @@ Future main() async {
         ChangeNotifierProvider(create: (_) {
           AlertRepository alertRepository = AlertRepositoryImpl(alertDataSourceImpl: AlertDataSourceImpl());
           return AlertViewModel(alertRepository: alertRepository);
-        }),
+        })
       ],
       child: const MyApp(),
     )
@@ -109,6 +110,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Customizecolor(const Color(0xff673AB7)).shade100,
+      )
+    );
     return MaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -129,7 +135,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Cabin',
       ),
-      home: const StarterScreen(),
+      home: const StarterScreen()
     );
   }
 }

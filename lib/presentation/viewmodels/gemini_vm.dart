@@ -47,7 +47,8 @@ class GeminiViewModel extends ChangeNotifier {
 
   retrievePrediction({
     required BuildContext context,
-    required Position position,
+    required String latitude,
+    required String longitude,
     required String location
   }) async {
 
@@ -76,15 +77,16 @@ class GeminiViewModel extends ChangeNotifier {
 
 
     var gemini = Provider.of<GeminiClient>(context, listen: false);
-    await gemini.generateContentFromText(prompt: message).then((value) {
+    await gemini.generateContentFromText(prompt: message).then((value) async {
       String result = value.replaceAll(RegExp(r'```json\n*'), '');
       result = result.replaceAll(RegExp(r'```'), '');
 
       setPrediction(GeminiPredictionModel.fromJson(json.decode(result)));
       setLoading(false);
       setError(false);
+      var infos = await Preferences().getUserInfos();
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ResultScreen(result: _prediction!, location: location, position: position,)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ResultScreen(userInfos: infos,result: _prediction!, location: location, latitude: latitude, longitude: longitude,)));
     }).onError((e, s) {
       setLoading(false);
       setError(true);
@@ -99,7 +101,9 @@ class GeminiViewModel extends ChangeNotifier {
 
     setLoading(true);
 
-    String message = "Donnes moi une analyse décrivant le problème de façon informative sur cette photo à mettre en description d'un formulaire à soumettre. Mettre la réponse en français";
+    String message = "Génère une description assez poussée à la base de l'analyse de cette photo en te mettant à la place de l'utilisateur qui remplit le formulaire."
+        "Il est surtout important de ne garder que les informations ayant un trait avec l'inondation."
+        "Mettre la réponse en français";
     var gemini = Provider.of<GeminiClient>(context, listen: false);
     await gemini.generateContentFromImage(image: image, message: message).then((value) {
       setMessage(value);

@@ -20,7 +20,7 @@ class ZoneModel extends Zone {
         longitude: json['longitude'],
         riskLevel: json['risk_level'],
         historicalData: json['historical_data'],
-        createdAt: json['created_at']
+        createdAt: DateTime.parse(json['created_at'])
     );
   }
 }

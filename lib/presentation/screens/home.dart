@@ -1,4 +1,6 @@
+import 'package:first_ai/data/helpers/utils.dart';
 import 'package:first_ai/presentation/screens/masters/maps.dart';
+import 'package:first_ai/presentation/screens/pages/alerts/list.dart';
 import 'package:first_ai/presentation/viewmodels/auth_vm.dart';
 import 'package:intl/intl.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
@@ -8,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:text_gradiate/text_gradiate.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,10 +22,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  @override
+  /*@override
   void initState() {
     super.initState();
-  }
+    final flood = Provider.of<FloodViewModel>(context, listen: false);
+    flood.retrieveDatas();
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -101,16 +104,71 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen(userInfos: widget.userInfos, type: 0,))),
+                              onTap: () {
+                                if(flood.retrieving) {
+                                  Utils().showMsgBox("Récupération des données nécessaires en cours", false, context);
+                                }else{
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen(userInfos: widget.userInfos, type: 1, reports: flood.getReports, zones: flood.getZones,)));
+                                }
+                              },
                               child: Container(
                                 width: size.width * 0.3,
                                 height: size.height * 0.25,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade100,
-                                  border: Border.all(color: Theme.of(context).primaryColorLight),
+                                  border: Border.all(color: flood.retrieving ? Colors.grey : Theme.of(context).primaryColorLight),
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                   )
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const SizedBox(height: 20,),
+                                    Image.asset(
+                                      "assets/vectors/analyze.png",
+                                      width: size.width * 0.2,
+                                      height: size.width * 0.2,
+                                      fit: BoxFit.fill,
+                                    ),
+                                    Container(
+                                      width: size.width * 0.3,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: flood.retrieving ? Colors.grey : Theme.of(context).primaryColorLight,
+                                          borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(7),
+                                          )
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          "Prédire",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                if(flood.retrieving) {
+                                  Utils().showMsgBox("Récupération des données nécessaires en cours", false, context);
+                                }else{
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen(userInfos: widget.userInfos, type: 0, reports: flood.getReports, zones: flood.getZones,)));
+                                }
+                              },
+                              child: Container(
+                                width: size.width * 0.3,
+                                height: size.height * 0.25,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  border: Border.all(color: flood.retrieving ? Colors.grey : Theme.of(context).primaryColorLight),
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,10 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: size.width * 0.3,
                                       height: 40,
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context).primaryColorLight,
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(7),
-                                        )
+                                        color: flood.retrieving ? Colors.grey : Theme.of(context).primaryColorLight
                                       ),
                                       child: const Center(
                                         child: Text(
@@ -147,20 +202,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen(userInfos: widget.userInfos, type: 1,))),
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AlertListScreen(userInfos: widget.userInfos))),
                               child: Container(
                                 width: size.width * 0.3,
                                 height: size.height * 0.25,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade100,
-                                    border: Border.all(color: Theme.of(context).primaryColorLight),
+                                  border: Border.all(color: Colors.redAccent),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomRight: Radius.circular(10),
+                                  )
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const SizedBox(height: 20,),
                                     Image.asset(
-                                      "assets/vectors/analyze.png",
+                                      "assets/vectors/alert.png",
                                       width: size.width * 0.2,
                                       height: size.width * 0.2,
                                       fit: BoxFit.fill,
@@ -168,65 +226,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Container(
                                       width: size.width * 0.3,
                                       height: 40,
-                                      decoration: BoxDecoration(
-                                          color: Theme.of(context).primaryColorLight
+                                      decoration: const BoxDecoration(
+                                        color: Colors.redAccent,
+                                        borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(7),
+                                        )
                                       ),
                                       child: const Center(
                                         child: Text(
-                                          "Analyser",
+                                          "Alerter",
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold
                                           ),
                                         ),
                                       ),
                                     )
                                   ],
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: size.width * 0.3,
-                              height: size.height * 0.25,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                border: Border.all(color: Colors.redAccent),
-                                borderRadius: const BorderRadius.only(
-                                  bottomRight: Radius.circular(10),
-                                )
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const SizedBox(height: 20,),
-                                  Image.asset(
-                                    "assets/vectors/alert.png",
-                                    width: size.width * 0.2,
-                                    height: size.width * 0.2,
-                                    fit: BoxFit.fill,
-                                  ),
-                                  Container(
-                                    width: size.width * 0.3,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.redAccent,
-                                      borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(7),
-                                      )
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        "Alerter",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
                               ),
                             ),
                           ],
@@ -245,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ).animate().fadeIn(),
                         GestureDetector(
-                          onTap: () => flood.retrieveReport(),
+                          onTap: () => flood.retrieveDatas(),
                           child: Container(
                             width: 35,
                             height: 35,
@@ -282,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     if(flood.retrieving == false && flood.getReports.isNotEmpty)
-                      ...flood.getReports.reversed.take(3).map((report) {
+                      ...flood.getReports.reversed.map((report) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Row(
@@ -298,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Icons.report_outlined,
                                   size: 20,
                                 ),
-                              ),
+                              ).animate().fadeIn(),
                               const SizedBox(width: 10,),
                               SizedBox(
                                 width: size.width * 0.8,
@@ -334,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         );
-                      })
+                      }),
                   ],
                 ),
               ],

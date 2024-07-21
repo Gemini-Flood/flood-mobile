@@ -54,7 +54,7 @@ class _StarterScreenState extends State<StarterScreen> {
               ).animate().fadeIn(),
               const SizedBox(height: 5,),
               const Text(
-                "FloodAI by Gemini",
+                "FloodAI par Gemini",
                 style: TextStyle(
                   fontSize: 12,
                 )

@@ -4,6 +4,7 @@ import 'package:first_ai/data/models/floods/report.dart';
 import 'package:first_ai/data/models/floods/zone.dart';
 import 'package:first_ai/domain/repositories/flood_repository.dart';
 import 'package:first_ai/domain/usecases/flood_usecase.dart';
+import 'package:first_ai/presentation/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class FloodViewModel extends ChangeNotifier {
@@ -12,7 +13,7 @@ class FloodViewModel extends ChangeNotifier {
 
   FloodViewModel({required this.floodRepository}) {
     setUpdate(false);
-    retrieveReport();
+    retrieveDatas();
   }
 
   bool _retrieving = false;
@@ -22,6 +23,7 @@ class FloodViewModel extends ChangeNotifier {
   ReportModel? _report;
   List<ReportModel> _reports = [];
   ZoneModel? _zone;
+  List<ZoneModel> _zones = [];
 
   bool get retrieving => _retrieving;
   bool get error => _error;
@@ -30,7 +32,7 @@ class FloodViewModel extends ChangeNotifier {
   ReportModel get getReport => _report!;
   List<ReportModel> get getReports => _reports;
   ZoneModel get getForecast => _zone!;
-
+  List<ZoneModel> get getZones => _zones;
 
   setRetrieving(bool value) {
     _retrieving = value;
@@ -67,7 +69,12 @@ class FloodViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  saveZone(Map<String, dynamic> body, BuildContext context) async {
+  setZones(List value) {
+    _zones = (value).map((i) => ZoneModel.fromJson(i)).toList();
+    notifyListeners();
+  }
+
+  saveZone(Map<String, dynamic> body, var userInfos, BuildContext context) async {
     setLoading(true);
     await FloodUseCase(floodRepository).actualizeZone(body).then((value) async {
       if(value['code'] == 200){
@@ -75,6 +82,7 @@ class FloodViewModel extends ChangeNotifier {
         setLoading(false);
         setUpdate(true);
         Utils().showMsgBox(value['message'], false, context);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(userInfos: userInfos)), (route) => false);
       }else if(value['error'] == true){
         setError(true);
         setLoading(false);
@@ -100,20 +108,35 @@ class FloodViewModel extends ChangeNotifier {
   }
 
   retrieveReport() async {
-    setRetrieving(true);
     await Preferences().getUserInfos().then((value) async {
       if(value['id'] != null) {
         await FloodUseCase(floodRepository).getUserReports(value['id']).then((value) async {
           if(value['code'] == 200) {
             setError(false);
-            setRetrieving(false);
             setReports(value['data']);
           } else if(value['error'] == true) {
             setError(true);
-            setRetrieving(false);
           }
         });
       }
     });
+  }
+
+  retrieveZone() async {
+    await FloodUseCase(floodRepository).getZones().then((value) async {
+      if(value['code'] == 200) {
+        setError(false);
+        setZones(value['data']);
+      } else if(value['error'] == true) {
+        setError(true);
+      }
+    });
+  }
+
+  retrieveDatas() async {
+    setRetrieving(true);
+    await retrieveReport();
+    await retrieveZone();
+    setRetrieving(false);
   }
 }

@@ -13,9 +13,8 @@ import 'package:shimmer/shimmer.dart';
 
 class ReportScreen extends StatefulWidget {
   final userInfos;
-  final String location;
-  final Position position;
-  const ReportScreen({super.key, this.userInfos, required this.location, required this.position});
+  final String location, latitude, longitude;
+  const ReportScreen({super.key, this.userInfos, required this.location, required this.latitude, required this.longitude});
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -42,8 +41,8 @@ class _ReportScreenState extends State<ReportScreen> {
       'description': descriptionController.text,
       'photo': media.toString(),
       'location': widget.location,
-      'latitude': widget.position.latitude.toString(),
-      'longitude': widget.position.longitude.toString(),
+      'latitude': widget.latitude.toString(),
+      'longitude': widget.longitude.toString(),
     };
     final flood = Provider.of<FloodViewModel>(context, listen: false);
     final gemini = Provider.of<GeminiViewModel>(context, listen: false);
@@ -344,11 +343,18 @@ class _ReportScreenState extends State<ReportScreen> {
                           fontSize: 17
                       ),
                     )
-                ) : Row(
-                  children: [
-                    CircularProgressIndicator(color: Theme.of(context).primaryColorLight,),
-                  ],
-                ),
+                ) : Shimmer.fromColors(
+                  baseColor: Colors.grey.shade300,
+                  highlightColor: Colors.grey.shade100,
+                  child: Container(
+                    height: 20,
+                    width: size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(300),
+                    ),
+                  ),
+                ).animate().fadeIn()
               ).animate().fadeIn(),
             ],
           );

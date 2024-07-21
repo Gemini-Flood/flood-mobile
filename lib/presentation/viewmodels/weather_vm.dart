@@ -97,15 +97,15 @@ class WeatherViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  retrieveWeatherDatas({required bool update, Position? position}) async {
+  retrieveWeatherDatas({required bool update, required String latitude, required String longitude}) async {
 
-    if(position != null){
+    if(latitude != null && longitude != null){
 
       update ? setUpdate(true) : setLoading(true);
 
       Map<String, String> body = {
-        "lat": position.latitude.toString(),
-        "long": position.longitude.toString()
+        "lat": latitude.toString(),
+        "long": longitude.toString()
       };
 
       await WeatherUseCase(weatherRepository).retrieveWeatherInfos(body).then((value) async {

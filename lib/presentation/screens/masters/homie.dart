@@ -11,9 +11,8 @@ import 'package:shimmer/shimmer.dart';
 
 class HomieScreen extends StatefulWidget {
   final userInfos;
-  final String location;
-  final Position position;
-  const HomieScreen({super.key, required this.userInfos, required this.position, required this.location});
+  final String location, latitude, longitude;
+  const HomieScreen({super.key, required this.userInfos, required this.location, required this.latitude, required this.longitude});
 
   @override
   State<HomieScreen> createState() => _HomieScreenState();
@@ -26,13 +25,13 @@ class _HomieScreenState extends State<HomieScreen> {
 
   actualize() async {
     isLoading = true;
-    await Provider.of<WeatherViewModel>(context, listen: false).retrieveWeatherDatas(update: true, position:  widget.position);
+    await Provider.of<WeatherViewModel>(context, listen: false).retrieveWeatherDatas(update: true, latitude: widget.latitude, longitude: widget.longitude);
     promptSent = false;
   }
 
   getWeatherDatas() async {
     final weather = Provider.of<WeatherViewModel>(context, listen: false);
-    await weather.retrieveWeatherDatas(update: false, position: widget.position);
+    await weather.retrieveWeatherDatas(update: false, latitude: widget.latitude, longitude: widget.longitude);
   }
 
   @override
@@ -86,7 +85,7 @@ class _HomieScreenState extends State<HomieScreen> {
 
         if(weather.loading == false && !promptSent){
           promptSent = true;
-          Future.delayed(const Duration(seconds: 5), () => gemini.retrievePrediction(context: context, position: widget.position, location: widget.location));
+          Future.delayed(const Duration(seconds: 5), () => gemini.retrievePrediction(context: context, location: widget.location, latitude: widget.latitude, longitude: widget.longitude));
         }
 
         return SafeArea(
@@ -215,7 +214,7 @@ class _HomieScreenState extends State<HomieScreen> {
                           onTap: () async {
                             await gemini.setError(false);
                             promptSent = true;
-                            gemini.retrievePrediction(context: context, position: widget.position, location: widget.location);
+                            gemini.retrievePrediction(context: context, location: widget.location, latitude: widget.latitude, longitude: widget.longitude);
                           },
                           child: Container(
                             height: 40,

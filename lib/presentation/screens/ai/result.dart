@@ -8,10 +8,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 class ResultScreen extends StatefulWidget {
-  final String location;
-  final Position position;
+  final userInfos;
+  final String location, latitude, longitude;
   final GeminiPredictionModel result;
-  const ResultScreen({super.key, required this.result, required this.location, required this.position});
+  const ResultScreen({super.key, required this.userInfos, required this.result, required this.location, required this.latitude, required this.longitude});
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();
@@ -46,13 +46,13 @@ class _ResultScreenState extends State<ResultScreen> {
     String level = risque.replaceAll(RegExp(r'\*'), '');
     Map<String, dynamic> body = {
       'location': widget.location,
-      'latitude': widget.position.latitude.toString(),
-      'longitude': widget.position.longitude.toString(),
+      'latitude': widget.latitude.toString(),
+      'longitude': widget.longitude.toString(),
       'risk_level': level.toLowerCase(),
       'historical_data': widget.result.detail['message'],
     };
     final flood = Provider.of<FloodViewModel>(context, listen: false);
-    await flood.saveZone(body, context);
+    await flood.saveZone(body, widget.userInfos, context);
   }
 
   @override
