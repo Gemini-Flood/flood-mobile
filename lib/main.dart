@@ -4,6 +4,7 @@ import 'package:first_ai/data/datasources/authentication/auth_datasource_impl.da
 import 'package:first_ai/data/datasources/flood/flood_datasource_impl.dart';
 import 'package:first_ai/data/datasources/weather/weather_datasource_impl.dart';
 import 'package:first_ai/data/helpers/notifications.dart';
+import 'package:first_ai/data/helpers/utils.dart';
 import 'package:first_ai/data/repositories/alertrepo_impl.dart';
 import 'package:first_ai/data/repositories/authrepo_impl.dart';
 import 'package:first_ai/data/repositories/floodrepo_impl.dart';
@@ -16,6 +17,7 @@ import 'package:first_ai/domain/repositories/weather_repository.dart';
 import 'package:first_ai/presentation/screens/starters/starter.dart';
 import 'package:first_ai/presentation/viewmodels/alert_vm.dart';
 import 'package:first_ai/presentation/viewmodels/auth_vm.dart';
+import 'package:first_ai/presentation/viewmodels/chat_vm.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:first_ai/presentation/viewmodels/google_vm.dart';
@@ -38,6 +40,7 @@ Future main() async {
     ),
   );
   await Notifications().initNotifications();
+  final guide = await Utils().loadJson();
 
   await dotenv.load(fileName: '.env');
   String iaKey = dotenv.env['IA_KEY']!;
@@ -65,7 +68,7 @@ Future main() async {
           WeatherRepository weatherRepository = WeatherRepositoryImpl(weatherDataSourceImpl: WeatherDataSourceImpl());
           return WeatherViewModel(weatherRepository: weatherRepository);
         }),
-        ChangeNotifierProvider(create: (_) => GeminiViewModel()),
+        ChangeNotifierProvider(create: (_) => GeminiViewModel(guide)),
         ChangeNotifierProvider(create: (_) => GoogleViewModel()),
         ChangeNotifierProvider(create: (_) {
           FloodRepository floodRepository = FloodRepositoryImpl(floodDataSourceImpl: FloodDataSourceImpl());
@@ -74,7 +77,8 @@ Future main() async {
         ChangeNotifierProvider(create: (_) {
           AlertRepository alertRepository = AlertRepositoryImpl(alertDataSourceImpl: AlertDataSourceImpl());
           return AlertViewModel(alertRepository: alertRepository);
-        })
+        }),
+        ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: const MyApp(),
     )

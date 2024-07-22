@@ -1,6 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Utils {
+  Future<Map<String, dynamic>> loadJson() async {
+    String jsonString = await rootBundle.loadString("assets/jsons/guide.json");
+    final Map<String, dynamic> jsonMap = json.decode(jsonString);
+    return jsonMap;
+  }
+
   updateBtnState(bool isActive) {
     isActive = !isActive;
     return isActive;

@@ -11,19 +11,24 @@ import 'package:provider/provider.dart';
 
 class GeminiViewModel extends ChangeNotifier {
 
-  GeminiViewModel() {
+  GeminiViewModel(Map<String, dynamic> guide) {
     setError(false);
+    setGuide(guide);
   }
 
   bool _loading = false;
   bool _error = false;
   String? message;
   GeminiPredictionModel? _prediction;
+  Map<String, dynamic> _guide = {};
+  List<String> _suggestions = [];
 
   bool get loading => _loading;
   bool get error => _error;
   String get getMessage => message!;
   GeminiPredictionModel get prediction => _prediction!;
+  Map<String, dynamic> get guide => _guide;
+  List<String> get suggestions => _suggestions;
 
   setLoading(bool value) {
     _loading = value;
@@ -42,6 +47,16 @@ class GeminiViewModel extends ChangeNotifier {
 
   setPrediction(GeminiPredictionModel value) {
     _prediction = value;
+    notifyListeners();
+  }
+
+  setGuide(Map<String, dynamic> value) {
+    _guide = value;
+    notifyListeners();
+  }
+
+  setSuggestions(List<String> value) {
+    _suggestions = value;
     notifyListeners();
   }
 
@@ -114,6 +129,31 @@ class GeminiViewModel extends ChangeNotifier {
       setError(true);
     });
 
+  }
+
+  suggestTips({
+    required BuildContext context
+  }) async {
+
+    String message = "Génères moi trois suggestions de questions que l'utilisateur pourra poser pour mieux comprendre le fonctionnement de l'application "
+        "en te basant uniquement sur ce guide formaté en JSON.\n"
+        "Voici le guide en question:\n\n"
+        "$guide\n\n"
+        "Formatte la réponse en JSON avec une unique clé 'suggestions' qui retournera une liste de trois questions.\n";
+    var gemini = Provider.of<GeminiClient>(context, listen: false);
+    await gemini.generateContentFromText(prompt: message).then((value) async {
+      String result = value.replaceAll(RegExp(r'```json\n*'), '');
+      result = result.replaceAll(RegExp(r'```'), '');
+
+      debugPrint(result);
+      setSuggestions(List.from(json.decode(result)['suggestions']));
+      setLoading(false);
+      setError(false);
+
+    }).onError((e, s) {
+      setLoading(false);
+      setError(true);
+    });
   }
 
 }

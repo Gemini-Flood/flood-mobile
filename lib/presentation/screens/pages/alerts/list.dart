@@ -39,6 +39,18 @@ class _AlertListScreenState extends State<AlertListScreen> {
             return const Progress(text: "Récupération des alertes actives",);
           }
 
+          if(alert.alerts.isEmpty){
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text("Pas d'alertes actives", overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            );
+          }
+
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             children: [

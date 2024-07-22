@@ -1,15 +1,18 @@
 import 'package:first_ai/data/models/history.dart';
 import 'package:first_ai/domain/clients/gemini_client.dart';
+import 'package:first_ai/presentation/viewmodels/chat_vm.dart';
 import 'package:first_ai/presentation/widgets/logo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String suggestion;
+  const ChatScreen({super.key, required this.suggestion});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,18 +26,13 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
   List<HistoryModel> histories = [];
 
-  sendMessage(String message) {
+  sendMessage(String message, BuildContext context) {
     setState(() {
       isResponding = true;
     });
     histories.add(HistoryModel(type: "user", message: message));
     var gemini = context.read<GeminiClient>();
-    if(histories.length == 1) {
-
-    }else{
-
-    }
-    gemini.generateContentFromText(prompt: message).then((value) {
+    gemini.haveTalk(message: message, histories: histories, context: context).then((value) {
       setState(() {
         isResponding = false;
       });
@@ -44,16 +42,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   scrollToBottom() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut
-    );
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      scrollController.jumpTo(
+        scrollController.position.maxScrollExtent,
+      );
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    final chat = Provider.of<ChatViewModel>(context, listen: false);
+    histories = chat.getHistories;
+    messageController.text = widget.suggestion;
   }
 
   @override
@@ -62,10 +63,10 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Questionner Gemini",
+          "Flood IA",
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold
+              fontSize: 13,
+              fontWeight: FontWeight.bold
           ),
         ),
       ),
@@ -83,22 +84,22 @@ class _ChatScreenState extends State<ChatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: history.type == "user" ? MainAxisAlignment.end : MainAxisAlignment.start,
                       children: [
-                        if(history.type == "ai")
+                        /*if(history.type == "ai")
                           Padding(
                             padding: const EdgeInsets.only(right: 5),
                             child: aiLogo(size: 40),
-                          ),
+                          ),*/
                         Container(
                           margin: histories.last == history && isResponding == false ? EdgeInsets.only(bottom: size.height * 0.1) : EdgeInsets.zero,
-                          constraints: BoxConstraints(maxWidth: size.width * 0.7),
+                          constraints: BoxConstraints(maxWidth: size.width * 0.8),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                           decoration: BoxDecoration(
-                            color: history.type == "user" ? Colors.deepPurpleAccent : Colors.white,
+                            color: history.type == "user" ? Theme.of(context).primaryColorLight : Colors.grey.shade200,
                             borderRadius: BorderRadius.only(
-                              topLeft: history.type == "user" ? const Radius.circular(10) : Radius.zero,
-                              topRight: history.type == "user" ? Radius.zero : const Radius.circular(10),
-                              bottomLeft: const Radius.circular(10),
-                              bottomRight: const Radius.circular(10),
+                              topLeft: history.type == "user" ? const Radius.circular(20) : Radius.zero,
+                              topRight: history.type == "user" ? Radius.zero : const Radius.circular(20),
+                              bottomLeft: const Radius.circular(20),
+                              bottomRight: const Radius.circular(20),
                             ),
                           ),
                           child: history.type == "user" ? Text(
@@ -150,7 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: const BoxDecoration(
-                color: Color(0xfffff8ff)
+                color: Color(0xffffffff)
               ),
               child: Column(
                 children: [
@@ -194,35 +195,34 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ),
                       ),
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
                           if(messageController.text.isNotEmpty) {
                             message = messageController.text;
                             messageController.clear();
-                            sendMessage(message);
+                            sendMessage(message, context);
+                            scrollToBottom();
                           }
                         },
                         child: Container(
                           width: size.width * 0.15,
                           height: 45,
                           decoration: BoxDecoration(
-                              color: Colors.deepPurpleAccent,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                  offset: const Offset(0, 0.5), // changes position of shadow
-                                ),
-                              ]
+                            color: Theme.of(context).primaryColorLight,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: const Offset(0, 0.5), // changes position of shadow
+                              ),
+                            ]
                           ),
-                          child: const Center(
-                            child: Icon(
-                              CupertinoIcons.paperplane_fill,
-                              color: Colors.white,
-                              size: 20,
-                            ),
+                          child: Icon(
+                            CupertinoIcons.paperplane_fill,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
                       )

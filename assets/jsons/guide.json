@@ -1,0 +1,218 @@
+{
+  "screens": [
+    {
+      "id": "1",
+      "name": "Home",
+      "description": "Écran d'accueil de l'application montrant les options principales.",
+      "actions": [
+        {
+          "action_name": "Prédire les risques d'inondation",
+          "target_screen": "2"
+        },
+        {
+          "action_name": "Faire des rapports d'inondation",
+          "target_screen": "3"
+        },
+        {
+          "action_name": "Relancer les alertes d'inondations",
+          "target_screen": "4"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Prédire les risques d'inondation",
+      "description": "Écran permettant de prédire les risques d'inondation. Affiche une carte avec des marqueurs pour les zones à risque.",
+      "actions": [
+        {
+          "action_name": "Voir les prévisions détaillées",
+          "target_screen": "5"
+        },
+        {
+          "action_name": "Retour à l'accueil",
+          "target_screen": "1"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Faire des rapports d'inondation",
+      "description": "Écran permettant de faire des rapports d'inondation. Permet de sélectionner une zone sur la carte et d'ajouter des détails.",
+      "actions": [
+        {
+          "action_name": "Soumettre un rapport",
+          "target_screen": "6"
+        },
+        {
+          "action_name": "Retour à l'accueil",
+          "target_screen": "1"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Relancer les alertes d'inondations",
+      "description": "Écran permettant de relancer les alertes d'inondations. Permet de notifier les utilisateurs aux alentours des zones à risque.",
+      "actions": [
+        {
+          "action_name": "Relancer une alerte",
+          "target_screen": "1"
+        },
+        {
+          "action_name": "Retour à l'accueil",
+          "target_screen": "1"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Détails des prévisions",
+      "description": "Écran affichant les prévisions météorologiques détaillées.",
+      "actions": [
+        {
+          "action_name": "Retour à la prédiction des risques d'inondation",
+          "target_screen": "2"
+        },
+        {
+          "action_name": "Retour à l'accueil",
+          "target_screen": "1"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Soumission de rapport",
+      "description": "Écran permettant de soumettre un rapport d'inondation.",
+      "actions": [
+        {
+          "action_name": "Retour aux rapports d'inondation",
+          "target_screen": "3"
+        },
+        {
+          "action_name": "Retour à l'accueil",
+          "target_screen": "1"
+        }
+      ]
+    }
+  ],
+  "guide": {
+    "navigation": {
+      "accueil": {
+        "description": "Expliquer la page d'accueil et les options disponibles.",
+        "message": "Bienvenue sur votre plateforme de prévision d'inondation. Sur la page d'accueil, vous pouvez choisir une action parmi trois options : Prédire, Reporter, et Alerter. En dessous, vous pouvez voir une liste de vos rapports précédents."
+      },
+      "predire": {
+        "description": "Guider l'utilisateur pour accéder et comprendre les prévisions.",
+        "message": "Pour prédire les inondations, cliquez sur le bouton 'Prédire'. Vous serez redirigé vers une page où vous pourrez sélectionner la localisation sur la carte."
+      },
+      "reporter": {
+        "description": "Aider l'utilisateur à signaler une inondation.",
+        "message": "Pour signaler une inondation, cliquez sur le bouton 'Reporter'. Vous pourrez remplir un formulaire avec des détails sur l'inondation, y compris la localisation et des photos si possible."
+      },
+      "alerter": {
+        "description": "Informer sur l'accès aux alertes et notifications.",
+        "message": "Pour relancer une alerte, cliquez sur le bouton 'Alerter'. Vous pouvez informer les autres utilisateurs des risques d'inondation imminente ou en cours."
+      },
+      "alertes_creees": {
+        "description": "Guider l'utilisateur sur la gestion des alertes créées.",
+        "message": "Sur la page des alertes, vous pouvez voir une liste des alertes d'inondation existantes. Pour chaque alerte, vous pouvez voir les détails du risque et relancer l'alerte si nécessaire en cliquant sur 'Relancer l'alerte'."
+      }
+    },
+    "comprehension_previsions": {
+      "conditions_actuelles": {
+        "description": "Expliquer les informations affichées pour les conditions actuelles.",
+        "message": "Les conditions actuelles affichent la température, l'humidité, la vitesse du vent, et les précipitations en cours. Ces données vous aident à comprendre le climat actuel dans votre région."
+      },
+      "previsions_court_terme": {
+        "description": "Aider à interpréter les prévisions pour les prochaines heures.",
+        "message": "Les prévisions à court terme indiquent les conditions météorologiques prévues pour les prochaines heures. Regardez les icônes et les descriptions pour voir s'il y aura de la pluie, du soleil, ou des nuages."
+      },
+      "previsions_long_terme": {
+        "description": "Expliquer les prévisions pour les prochains jours.",
+        "message": "Les prévisions à long terme montrent les conditions météorologiques pour les prochains jours. Cela inclut des informations sur les températures minimales et maximales, ainsi que les chances de précipitation."
+      },
+      "historique_precipitations": {
+        "description": "Fournir des informations sur les précipitations passées.",
+        "message": "L'historique des précipitations sur les deux derniers mois montre les tendances de la pluie dans votre région. Cela peut aider à comprendre les schémas météorologiques récents et à évaluer les risques d'inondation."
+      },
+      "topographie_sol": {
+        "description": "Expliquer comment la topographie du sol influence les prévisions.",
+        "message": "La topographie du sol inclut des informations sur les élévations et les types de sol dans votre région. Ces données sont essentielles pour prédire comment l'eau de pluie va se déplacer et s'accumuler, influençant ainsi les risques d'inondation."
+      },
+      "alertes_meteo": {
+        "description": "Expliquer comment les alertes météo sont affichées.",
+        "message": "Les alertes météo sont des notifications importantes concernant des conditions météorologiques extrêmes ou dangereuses. Assurez-vous de lire ces alertes pour rester informé des risques potentiels."
+      }
+    },
+    "signalement_inondation": {
+      "acces_signalement": {
+        "description": "Guider l'utilisateur pour accéder à l'outil de signalement.",
+        "message": "Pour signaler une inondation, cliquez sur l'onglet 'Reporter' dans le menu principal."
+      },
+      "remplir_formulaire": {
+        "description": "Aider l'utilisateur à compléter le formulaire avec les informations requises.",
+        "message": "Remplissez le formulaire en fournissant la localisation de l'inondation, une description détaillée et des photos si possible. Plus vous fournissez d'informations, plus les autorités pourront réagir efficacement."
+      },
+      "soumettre_signalement": {
+        "description": "Expliquer comment soumettre le signalement.",
+        "message": "Après avoir complété le formulaire, cliquez sur 'Soumettre'. Votre signalement sera envoyé aux autorités compétentes et mis à jour sur la carte des inondations."
+      },
+      "suivi_signalement": {
+        "description": "Informer sur le suivi des signalements soumis.",
+        "message": "Vous pouvez suivre l'état de votre signalement dans la section 'Mes rapports'. Vous recevrez également des notifications si des actions sont prises en réponse à votre signalement."
+      }
+    }
+  },
+  "workflow": {
+    "predire": {
+      "etape_1": {
+        "description": "Accéder à la page de prédiction",
+        "message": "Cliquez sur le bouton 'Prédire' pour accéder à la page de prédiction."
+      },
+      "etape_2": {
+        "description": "Choisir la localisation sur la carte",
+        "message": "Sur la carte, sélectionnez la localisation pour laquelle vous souhaitez obtenir des prévisions."
+      },
+      "etape_3": {
+        "description": "Automatiquement lancer une requête pour obtenir les données",
+        "message": "Une requête sera automatiquement lancée pour obtenir les données suivantes : prévisions météorologiques courantes, prédictions à venir sur 40h, historiques de précipitations sur 02 mois, et la topographie du sol."
+      },
+      "etape_4": {
+        "description": "Voir les résultats de la prédiction",
+        "message": "Consultez les résultats de la prédiction d'inondation pour comprendre le risque potentiel basé sur les données fournies."
+      }
+    },
+    "reporter": {
+      "etape_1": {
+        "description": "Accéder à la page de signalement",
+        "message": "Cliquez sur le bouton 'Reporter' pour accéder au formulaire de signalement d'inondation."
+      },
+      "etape_2": {
+        "description": "Choisir la localisation sur la carte",
+        "message": "Sur la carte, sélectionnez la localisation de l'inondation que vous souhaitez signaler."
+      },
+      "etape_3": {
+        "description": "Remplir le formulaire de signalement",
+        "message": "Complétez le formulaire avec les détails de l'inondation, y compris la localisation et les photos."
+      },
+      "etape_4": {
+        "description": "Soumettre le signalement",
+        "message": "Cliquez sur 'Soumettre' pour envoyer votre signalement aux autorités compétentes."
+      }
+    },
+    "alerter": {
+      "etape_1": {
+        "description": "Accéder à la page des alertes",
+        "message": "Cliquez sur le bouton 'Alerter' pour accéder aux alertes d'inondation existantes."
+      },
+      "etape_2": {
+        "description": "Voir les détails des alertes",
+        "message": "Consultez les détails des alertes d'inondation pour comprendre le risque actuel."
+      },
+      "etape_3": {
+        "description": "Relancer une alerte",
+        "message": "Cliquez sur 'Relancer l'alerte' pour notifier les utilisateurs à proximité du risque d'inondation."
+      }
+    }
+  }
+}

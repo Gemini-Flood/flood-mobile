@@ -1,7 +1,9 @@
 import 'package:first_ai/data/helpers/utils.dart';
+import 'package:first_ai/presentation/screens/ai/preview.dart';
 import 'package:first_ai/presentation/screens/masters/maps.dart';
 import 'package:first_ai/presentation/screens/pages/alerts/list.dart';
 import 'package:first_ai/presentation/viewmodels/auth_vm.dart';
+import 'package:first_ai/presentation/viewmodels/gemini_vm.dart';
 import 'package:intl/intl.dart';
 import 'package:first_ai/presentation/viewmodels/flood_vm.dart';
 import 'package:first_ai/presentation/widgets/loader.dart';
@@ -22,19 +24,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  /*@override
-  void initState() {
-    super.initState();
-    final flood = Provider.of<FloodViewModel>(context, listen: false);
-    flood.retrieveDatas();
-  }*/
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Consumer2<FloodViewModel, AuthViewModel>(
-        builder: (context, flood, auth, child) {
+      body: Consumer3<FloodViewModel, AuthViewModel, GeminiViewModel>(
+        builder: (context, flood, auth, gemini, child) {
           return SafeArea(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -45,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        aiLogo(size: 50).animate().fadeIn(),
+                        GestureDetector(
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AIPreviewScreen(userInfos: widget.userInfos))),
+                          child: aiLogo(size: 50)
+                        ).animate().fadeIn(),
                       ],
                     ),
                     TextGradiate(
